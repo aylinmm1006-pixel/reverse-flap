@@ -1,21 +1,23 @@
-# Reverse Flap — REMIX 02
+# Reverse Flap — REMIX 03 (Final)
 
-A browser game inspired by Flappy Bird, with a major change: **the bird flies automatically and the player controls the pipe openings**.
+A small original-shapes browser game inspired by Flappy Bird. **The twist:** the bird flies on its own; the player moves the **pipe openings**, not the bird.
 
-## Play
+## Open and play
 
-Download this GitHub repository as ZIP, extract it, then open `index.html` in Chrome, Safari, or another modern browser. No server or extra files are needed.
+Download the repository ZIP from GitHub, extract it, and double-click `index.html`. No installation, internet connection, or other assets are needed. Click **Start game**. Hold **Up / Down** or **W / S**, or hold the on-screen arrow buttons, to move the pipe gap. There is **no score limit**: keep passing pipes to earn points and beat your best score. Touch a pipe to end the round. **Play again** starts a fresh round; **Restart** returns to the opening screen.
 
-Click **Start game**. Hold **Up/Down arrow** or **W/S** to move the pipe opening. Onscreen buttons work too. Position the opening around the bird as the pipe moves toward it. Each safe pipe earns a point. **Pass five pipes to win**, or collide with a pipe to lose. Click **Play again** to start a new round; **Restart** returns to the starting screen.
+## Final improvement
 
-## What changed for REMIX 02
+Fixed an abrupt control issue: the gap used to jump back to the center whenever a new pipe appeared, even if the player was positioning it. Now the opening **stays where the player left it** between pipes. Also cleared held keyboard controls when a round ends, and clarified the opening directions.
 
-Added a clear five-pipe win condition and a separate victory message. Fixed replay handling so a finished round resets before a new one starts, rather than carrying over its score. The reverse-control mechanic remains the main challenge.
+## Classmate feedback and change
 
-## Testing
+A classmate said the game was understandable but wanted to keep playing instead of winning automatically after five pipes. The five-point win limit was removed so the round continues until a collision. **Retest needed:** pass at least six pipes, collide, and restart; confirm the score continues, the collision ends the round, and the score resets.
 
-See `REMIX02_Test_Plan.txt` for five repeatable checks and expected results. Complete the actual browser tests and classmate playtest yourself; do not treat expected results as completed test evidence.
+## Known limitations
+
+One fixed difficulty level. This is a small single-screen game with no audio.
 
 ## Credits
 
-Game concept and creative decisions: student. Code and documentation assistance: ChatGPT. Graphics: original shapes drawn in JavaScript. No external art or audio.
+Game concept and gameplay choices: student. Coding and documentation assistance: ChatGPT. All graphics are original JavaScript shapes; no outside art or audio.

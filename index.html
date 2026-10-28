@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reverse Flap — Remix 02</title>
+<title>Reverse Flap — Remix 03</title>
 <style>
 :root{color-scheme:dark;--pink:#ff7bc5;--blue:#6af5ff;--ink:#15112d}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,-apple-system,Arial,sans-serif;background:radial-gradient(circle at 50% 10%,#34316a,#121126 70%);color:#fff}
@@ -17,11 +17,11 @@ button{font:inherit;font-weight:700;color:#15112d;background:var(--blue);border:
 <p>The bird flies by itself. <strong>You control the pipe gaps!</strong> Press <strong>↑ / ↓</strong> (or W / S), or use the buttons to move the opening.</p>
 <div class="frame">
 <canvas id="game" width="560" height="390" aria-label="Reverse Flap game area: move the pipe openings vertically to guide the flying bird"></canvas>
-<div id="overlay"><div class="panel"><h2 id="overlayTitle">Reverse the rules!</h2><p id="overlayText">Move the pipe gap to meet the bird. Guide the bird through 5 pipes to win. One collision ends the round.</p><button id="start">Start game</button></div></div>
+<div id="overlay"><div class="panel"><h2 id="overlayTitle">Reverse the rules!</h2><p id="overlayText">Move the pipe gap to meet the bird. Keep passing pipes to build your score. One collision ends the round.</p><button id="start">Start game</button></div></div>
 </div>
 <div class="controls"><button id="up" type="button">▲ Move gap up</button><button id="down" type="button">▼ Move gap down</button><button id="reset" type="button">Restart</button></div>
-<p id="status" aria-live="polite">Ready · Score: 0 / 5 · Best: 0</p>
-<p class="footer">Remix 02 complete round · Original vector shapes · No outside images or audio</p>
+<p id="status" aria-live="polite">Ready · Score: 0 · Best: 0</p>
+<p class="footer">Remix 03 final release · Original vector shapes · No outside images or audio</p>
 <script>
 'use strict';
 const canvas=document.getElementById('game');
@@ -32,7 +32,7 @@ const overlayTitle=document.getElementById('overlayTitle');
 const overlayText=document.getElementById('overlayText');
 const startButton=document.getElementById('start');
 const W=canvas.width,H=canvas.height;
-const birdX=118,birdR=13,gapSize=126,pipeWidth=73,pipeSpeed=125,winScore=5;
+const birdX=118,birdR=13,gapSize=126,pipeWidth=73,pipeSpeed=125;
 const state={running:false,elapsed:0,score:0,best:0,pipeX:W+55,gapY:H/2,passed:false,lastTime:0,raf:0,ended:false};
 const held={up:false,down:false};
 const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
@@ -43,7 +43,7 @@ function reset(){
   state.pipeX=W+25;state.gapY=H/2;state.passed=false;state.lastTime=0;state.ended=false;
   held.up=false;held.down=false;draw();setStatus('Ready');
   overlay.hidden=false;overlayTitle.textContent='Reverse the rules!';
-  overlayText.textContent='The bird flies automatically. Move the pipe gap with ↑ / ↓ or W / S. Save the bird through 5 pipes to win!';
+  overlayText.textContent='The bird flies automatically. Hold ↑ / ↓ or W / S (or the buttons) to move the gap. Keep adjusting for each pipe. Survive as long as you can and beat your best score!';
   startButton.textContent='Start game';
 }
 function start(){
@@ -52,15 +52,15 @@ function start(){
   overlay.hidden=true;state.running=true;state.lastTime=0;
   setStatus('Playing');state.raf=requestAnimationFrame(frame);
 }
-function gameOver(won=false){
-  state.running=false;state.ended=true;cancelAnimationFrame(state.raf);
+function gameOver(){
+  state.running=false;state.ended=true;held.up=false;held.down=false;cancelAnimationFrame(state.raf);
   state.best=Math.max(state.best,state.score);
-  setStatus(won?'You win!':'Game over');overlay.hidden=false;
-  overlayTitle.textContent=won?'You win! Five safe pipes!':'Oops! The bird hit a pipe.';
-  overlayText.textContent=won?'Great job! You guided the bird through all five pipes. Play again for another round.':'You scored '+state.score+' out of '+winScore+'. Press play again to try another round!';
+  setStatus('Game over');overlay.hidden=false;
+  overlayTitle.textContent='Oops! The bird hit a pipe.';
+  overlayText.textContent='You passed '+state.score+' pipes! Best: '+state.best+'. Press play again to beat your score.';
   startButton.textContent='Play again';
 }
-function newPipe(){state.pipeX=W+30;state.passed=false;state.gapY=H/2}
+function newPipe(){state.pipeX=W+30;state.passed=false}
 function frame(timestamp){
   if(!state.running)return;
   const dt=state.lastTime?Math.min((timestamp-state.lastTime)/1000,0.04):0;
@@ -75,7 +75,6 @@ function frame(timestamp){
   }
   if(!state.passed && state.pipeX+pipeWidth<birdX-birdR){
     state.passed=true;state.score++;state.best=Math.max(state.best,state.score);setStatus('Nice save!');
-    if(state.score>=winScore){draw();gameOver(true);return;}
   }
   if(state.pipeX+pipeWidth<-10)newPipe();
   draw();state.raf=requestAnimationFrame(frame);
@@ -99,7 +98,7 @@ function draw(){
   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(birdX+5,y-4,4,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#24233b';ctx.beginPath();ctx.arc(birdX+6,y-4,1.8,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#fb8c80';ctx.beginPath();ctx.moveTo(birdX+birdR-1,y);ctx.lineTo(birdX+birdR+10,y+4);ctx.lineTo(birdX+birdR-1,y+8);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';ctx.fillText('SCORE  '+state.score+' / '+winScore,18,30);
+  ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';ctx.fillText('SCORE  '+state.score+'   BEST  '+state.best,18,30);
   ctx.font='13px system-ui';ctx.fillStyle='#d2d7ff';ctx.fillText('MOVE THE PIPES, NOT THE BIRD',18,H-16);
 }
 function bindHold(id,key){
@@ -110,8 +109,8 @@ function bindHold(id,key){
 bindHold('up','up');bindHold('down','down');
 window.addEventListener('keydown',e=>{
   if(['ArrowUp','ArrowDown',' ','KeyW','KeyS'].includes(e.code))e.preventDefault();
-  if(e.code==='ArrowUp'||e.code==='KeyW')held.up=true;
-  if(e.code==='ArrowDown'||e.code==='KeyS')held.down=true;
+  if(state.running&&(e.code==='ArrowUp'||e.code==='KeyW'))held.up=true;
+  if(state.running&&(e.code==='ArrowDown'||e.code==='KeyS'))held.down=true;
   if(e.code==='Space'&&!state.running){start()}
 });
 window.addEventListener('keyup',e=>{

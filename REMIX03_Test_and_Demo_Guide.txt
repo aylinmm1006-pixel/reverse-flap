@@ -1,0 +1,27 @@
+REVERSE FLAP — REMIX 03: FINAL TEST AND DEMO GUIDE
+
+TEST THESE YOURSELF (expected outcomes, not claimed results):
+1. Fresh copy: Download the repo as ZIP into a NEW folder; extract and open index.html. Expect game to load with no missing assets.
+2. Start: Click Start game. Expect the bird and pipes to animate.
+3. Controls: Hold Up/W, then Down/S; try on-screen buttons. Expect the pipe gap to move, not the bird.
+4. Special rule: Move the gap to line up with the automatically flying bird. Expect safe passes to increase score.
+5. Unlimited scoring: Pass at least SIX pipes. Expect the game to continue after five and the score to reach six or more.
+6. Lose: Allow bird to hit a pipe. Expect Game over with the final score.
+7. Restart: Click Play again and Restart. Expect score 0, new round and opening screen respectively.
+8. Edge case: Hold a direction while the round ends, then play again. Expect controls not to stay stuck.
+9. Improvement: Watch gap between successive pipes. Expect no sudden reset to center.
+10. Have one classmate play without coaching. Note their REAL difficulty and make/retest one improvement if needed.
+
+ONE CHANGE TO EXPLAIN:
+Earlier newPipe() reset gapY to H/2. This made the opening snap to center between pipes. I removed that reset so the player keeps control of the opening's position. Test by moving the gap high, passing a pipe, and observing the next pipe.
+
+ONE CODE RULE TO EXPLAIN:
+In frame(), when the pipe overlaps the bird, the code checks whether the bird is outside the safe gap. If so, gameOver() runs. When the whole pipe passes safely, the score increases. There is no automatic win at five points; the game continues until a collision.
+
+PRESENTATION (practice in your own words):
+Original game idea: Flappy Bird. Big change: bird moves automatically; I control pipe gaps. Creative reason: it makes players plan around the obstacle instead of the character. Demonstrate a pass, an ending, and restart. Point out the collision rule in frame() and the gap positioning fix in newPipe().
+
+CLASSMATE FEEDBACK:
+What they suggested: They understood the game, but wanted unlimited scoring instead of ending at five pipes.
+What I changed: Removed the five-point win condition; scoring continues until a collision.
+How I retested it (fill in AFTER testing): __________________________
