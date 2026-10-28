@@ -1,0 +1,24 @@
+REMIX 02 — Five checks to perform in your browser
+
+1. START: Open index.html and click Start game.
+   Expected: overlay disappears; bird and pipe animate; score begins at 0.
+2. CONTROLS: Hold Up/W and Down/S, and try the on-screen buttons.
+   Expected: pipe opening moves vertically, staying within the canvas.
+3. SPECIAL RULE: Keep the pipe opening aligned with the bird as it approaches.
+   Expected: bird moves by itself; only the pipe gap responds to controls; each safe pass earns 1 point.
+4. ENDING: Intentionally collide with a pipe, then play again and try to pass five pipes.
+   Expected: collision displays Game over; five safe passes display You win; movement stops at either ending.
+5. RESTART: After an ending, click Play again. Also try the Restart button mid-round.
+   Expected: fresh score of 0 and a new round; Restart returns to the opening screen.
+
+CLASSMATE PLAYTEST (complete after observing a real classmate):
+- What the classmate tried:
+- Biggest confusion or problem they found:
+- Two possible fixes considered:
+- Fix chosen and code changed:
+- Retest steps and actual result:
+
+EXPLAIN TO TEACHER:
+- Big rule: I control the gaps instead of the bird.
+- One code change: winScore=5; the scoring check calls gameOver(true) when score reaches 5.
+- Replay fix: state.ended is set at game over; start() resets the round when it was ended.

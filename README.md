@@ -1,27 +1,21 @@
-# Reverse Flap — REMIX 01
+# Reverse Flap — REMIX 02
 
-A one-screen browser game inspired by the *Flappy Bird* style of obstacle-dodging games, but with **one big rule change**: the bird flies automatically and the player moves the **pipe openings**, rather than controlling the bird.
+A browser game inspired by Flappy Bird, with a major change: **the bird flies automatically and the player controls the pipe openings**.
 
-## Open it
+## Play
 
-Download the repository as a ZIP, extract it, and double-click `index.html`. No installation, server, or internet connection is needed. Chrome and Safari should work.
+Download this GitHub repository as ZIP, extract it, then open `index.html` in Chrome, Safari, or another modern browser. No server or extra files are needed.
 
-## Controls
+Click **Start game**. Hold **Up/Down arrow** or **W/S** to move the pipe opening. Onscreen buttons work too. Position the opening around the bird as the pipe moves toward it. Each safe pipe earns a point. **Pass five pipes to win**, or collide with a pipe to lose. Click **Play again** to start a new round; **Restart** returns to the starting screen.
 
-- Click **Start game**.
-- Hold **↑ / ↓** or **W / S** to move the pipe gap up or down. You can also hold the onscreen buttons.
-- Move the opening to line up with the flying bird before the pipe reaches it.
-- Each pipe passed safely earns one point. Hitting a pipe ends the run.
-- **Restart** clears your score and starts over at the opening screen; **Play again** begins another run.
+## What changed for REMIX 02
 
-## Why I changed it
+Added a clear five-pipe win condition and a separate victory message. Fixed replay handling so a finished round resets before a new one starts, rather than carrying over its score. The reverse-control mechanic remains the main challenge.
 
-Usually you control the bird to avoid fixed pipes. Here you control the obstacles while the bird moves automatically. The challenge is predicting the bird's movement and positioning the opening in time.
+## Testing
 
-## Status and known issues
-
-This is a small **REMIX 01 prototype**, with one screen, a movable pipe gap, collision detection, scoring and restart. The bird follows a repeating up-and-down path. There are no additional levels yet. Test keyboard and button controls on your own computer before submitting.
+See `REMIX02_Test_Plan.txt` for five repeatable checks and expected results. Complete the actual browser tests and classmate playtest yourself; do not treat expected results as completed test evidence.
 
 ## Credits
 
-Game design decision: student. HTML, CSS, JavaScript, and initial testing guidance: created with help from ChatGPT. Artwork: original canvas shapes created in code. No outside art or sound files.
+Game concept and creative decisions: student. Code and documentation assistance: ChatGPT. Graphics: original shapes drawn in JavaScript. No external art or audio.
