@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reverse Flap — Remix 01</title>
+<style>
+:root{color-scheme:dark;--pink:#ff7bc5;--blue:#6af5ff;--ink:#15112d}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,-apple-system,Arial,sans-serif;background:radial-gradient(circle at 50% 10%,#34316a,#121126 70%);color:#fff}
+main{width:min(96vw,620px);padding:16px;text-align:center}h1{margin:0;font-size:clamp(28px,6vw,43px);letter-spacing:1px}h1 span{color:var(--pink)}
+p{color:#d9d9fa;font-size:14px;line-height:1.5;margin:8px 0 14px}.frame{position:relative;border:3px solid #7870ca;border-radius:16px;overflow:hidden;box-shadow:0 0 32px #9070ea55;background:#191736}
+canvas{display:block;width:100%;height:auto;touch-action:none}#overlay{position:absolute;inset:0;display:grid;place-items:center;background:#0b0a1fb8;padding:18px}#overlay[hidden]{display:none}.panel{background:#1b1a39f4;border:1px solid #8d8bdb;border-radius:15px;padding:20px;max-width:340px;box-shadow:0 10px 25px #0007}.panel h2{margin:0 0 8px;font-size:25px}.panel p{margin-bottom:15px}
+button{font:inherit;font-weight:700;color:#15112d;background:var(--blue);border:0;border-radius:10px;padding:11px 19px;cursor:pointer}button:focus-visible{outline:3px solid white;outline-offset:3px}.controls{display:flex;justify-content:center;gap:12px;margin-top:13px;flex-wrap:wrap}.controls button{min-width:120px;background:#fba9d5}.footer{font-size:12px;opacity:.85}
+</style>
+</head>
+<body><main>
+<h1>REVERSE <span>FLAP</span></h1>
+<p>The bird flies by itself. <strong>You control the pipe gaps!</strong> Press <strong>↑ / ↓</strong> (or W / S), or use the buttons to move the opening.</p>
+<div class="frame">
+<canvas id="game" width="560" height="390" aria-label="Reverse Flap game area: move the pipe openings vertically to guide the flying bird"></canvas>
+<div id="overlay"><div class="panel"><h2 id="overlayTitle">Reverse the rules!</h2><p id="overlayText">Move the pipe gap to meet the bird. Keep it flying and score when it passes a pipe.</p><button id="start">Start game</button></div></div>
+</div>
+<div class="controls"><button id="up" type="button">▲ Move gap up</button><button id="down" type="button">▼ Move gap down</button><button id="reset" type="button">Restart</button></div>
+<p id="status" aria-live="polite">Ready · Score: 0 · Best: 0</p>
+<p class="footer">Remix 01 prototype · Original vector shapes · No outside images or audio</p>
+<script>
+'use strict';
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+const status=document.getElementById('status');
+const overlay=document.getElementById('overlay');
+const overlayTitle=document.getElementById('overlayTitle');
+const overlayText=document.getElementById('overlayText');
+const startButton=document.getElementById('start');
+const W=canvas.width,H=canvas.height;
+const birdX=118,birdR=13,gapSize=126,pipeWidth=73,pipeSpeed=125;
+const state={running:false,elapsed:0,score:0,best:0,pipeX:W+55,gapY:H/2,passed:false,lastTime:0,raf:0};
+const held={up:false,down:false};
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+function birdY(t){return H/2+78*Math.sin(t*1.8)+14*Math.sin(t*0.65+0.7)}
+function setStatus(msg){status.textContent=msg+' · Score: '+state.score+' · Best: '+state.best}
+function reset(){
+  cancelAnimationFrame(state.raf);state.running=false;state.elapsed=0;state.score=0;
+  state.pipeX=W+25;state.gapY=H/2;state.passed=false;state.lastTime=0;
+  held.up=false;held.down=false;draw();setStatus('Ready');
+  overlay.hidden=false;overlayTitle.textContent='Reverse the rules!';
+  overlayText.textContent='The bird flies automatically. Move the pipe gap with ↑ / ↓ or W / S to let it through.';
+  startButton.textContent='Start game';
+}
+function start(){
+  if(state.running)return;
+  overlay.hidden=true;state.running=true;state.lastTime=0;
+  setStatus('Playing');state.raf=requestAnimationFrame(frame);
+}
+function gameOver(){
+  state.running=false;cancelAnimationFrame(state.raf);
+  state.best=Math.max(state.best,state.score);
+  setStatus('Game over');overlay.hidden=false;
+  overlayTitle.textContent='Oops! The bird hit a pipe.';
+  overlayText.textContent='You scored '+state.score+'. Press play again to try another run!';
+  startButton.textContent='Play again';
+}
+function newPipe(){state.pipeX=W+30;state.passed=false;state.gapY=H/2}
+function frame(timestamp){
+  if(!state.running)return;
+  const dt=state.lastTime?Math.min((timestamp-state.lastTime)/1000,0.04):0;
+  state.lastTime=timestamp;state.elapsed+=dt;
+  let direction=(held.down?1:0)-(held.up?1:0);
+  state.gapY=clamp(state.gapY+direction*235*dt,gapSize/2+15,H-gapSize/2-15);
+  state.pipeX-=pipeSpeed*dt;
+  const y=birdY(state.elapsed);
+  if(state.pipeX<=birdX+birdR&&state.pipeX+pipeWidth>=birdX-birdR &&
+    (y-birdR<state.gapY-gapSize/2||y+birdR>state.gapY+gapSize/2)){
+    draw();gameOver();return;
+  }
+  if(!state.passed && state.pipeX+pipeWidth<birdX-birdR){
+    state.passed=true;state.score++;state.best=Math.max(state.best,state.score);setStatus('Nice save!');
+  }
+  if(state.pipeX+pipeWidth<-10)newPipe();
+  draw();state.raf=requestAnimationFrame(frame);
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#201c4a');bg.addColorStop(1,'#101631');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#8881df1f';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=35){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+  for(let y=0;y<H;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  const top=state.gapY-gapSize/2,bottom=state.gapY+gapSize/2;
+  ctx.fillStyle='#42d8c8';ctx.strokeStyle='#b4fff6';ctx.lineWidth=3;
+  function rect(x,y,w,h){if(h<=0)return;ctx.fillRect(x,y,w,h);ctx.strokeRect(x+1.5,y+1.5,w-3,h-3)}
+  rect(state.pipeX,0,pipeWidth,top);
+  rect(state.pipeX,bottom,pipeWidth,H-bottom);
+  ctx.fillStyle='#74f9e9';ctx.fillRect(state.pipeX-5,top-13,pipeWidth+10,13);
+  ctx.fillRect(state.pipeX-5,bottom,pipeWidth+10,13);
+  const y=birdY(state.elapsed);
+  ctx.fillStyle='#ffdc65';ctx.beginPath();ctx.arc(birdX,y,birdR,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(birdX+5,y-4,4,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#24233b';ctx.beginPath();ctx.arc(birdX+6,y-4,1.8,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fb8c80';ctx.beginPath();ctx.moveTo(birdX+birdR-1,y);ctx.lineTo(birdX+birdR+10,y+4);ctx.lineTo(birdX+birdR-1,y+8);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';ctx.fillText('SCORE  '+state.score,18,30);
+  ctx.font='13px system-ui';ctx.fillStyle='#d2d7ff';ctx.fillText('MOVE THE PIPES, NOT THE BIRD',18,H-16);
+}
+function bindHold(id,key){
+  const b=document.getElementById(id);
+  b.addEventListener('pointerdown',e=>{e.preventDefault();held[key]=true;b.setPointerCapture(e.pointerId)});
+  for(const name of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(name,()=>held[key]=false);
+}
+bindHold('up','up');bindHold('down','down');
+window.addEventListener('keydown',e=>{
+  if(['ArrowUp','ArrowDown',' ','KeyW','KeyS'].includes(e.code))e.preventDefault();
+  if(e.code==='ArrowUp'||e.code==='KeyW')held.up=true;
+  if(e.code==='ArrowDown'||e.code==='KeyS')held.down=true;
+  if(e.code==='Space'&&!state.running){if(overlayTitle.textContent!=='Reverse the rules!')reset();start()}
+});
+window.addEventListener('keyup',e=>{
+  if(e.code==='ArrowUp'||e.code==='KeyW')held.up=false;
+  if(e.code==='ArrowDown'||e.code==='KeyS')held.down=false;
+});
+window.addEventListener('blur',()=>{held.up=false;held.down=false});
+startButton.addEventListener('click',()=>{if(overlayTitle.textContent!=='Reverse the rules!')reset();start()});
+document.getElementById('reset').addEventListener('click',reset);
+reset();
+</script></main></body></html>

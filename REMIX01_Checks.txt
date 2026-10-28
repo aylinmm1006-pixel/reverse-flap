@@ -1,0 +1,19 @@
+REMIX 01 — Testing and explanation notes
+
+Concept: Reverse Flap — instead of steering the bird, the player moves the pipe openings.
+
+Check 1: Start the game. Expected: the bird begins moving on its own and a pipe travels toward it.
+Actual: To be filled in after opening the game in a browser.
+
+Check 2: Hold Up, then Down while playing. Expected: the pipe opening moves within the screen boundaries, without moving the bird directly.
+Actual: To be filled in after testing.
+
+Check 3: Let the bird hit a pipe. Expected: the game ends and shows a replay option.
+Actual: To be filled in after testing.
+
+Check 4: Press Restart. Expected: the score returns to zero and the opening directions appear.
+Actual: To be filled in after testing.
+
+Explanation for teacher: I changed the original obstacle-dodging mechanic. Instead of tapping to move the character, you move the pipe gap, so you have to predict the automatically moving bird. The arrow-key handlers set held.up or held.down. During each animation frame, those inputs change state.gapY, and the draw() function uses state.gapY to place the opening. Collision detection compares the bird position to the opening.
+
+AI code decision: I chose a moving gap instead of moving entire pipes sideways, because the player can immediately see how the new rule affects success or failure. This is a proposed design choice; describe any changes you personally decide to make.
